@@ -6,7 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -33,7 +33,7 @@ public class Veiculo {
 
     private int anoFabricacao;
 
-    @ManyToMany
+    @ManyToOne
     @JoinColumn(name = "id_proprietario") // Cria uma coluna de relacionamento na tabela
     @JsonIgnoreProperties("veiculos") // Quando buscar os dados do proprietário, ignore os dados dos veículos.
     private Proprietario proprietario;

@@ -15,68 +15,67 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.gama.itau.spring03.dto.VeiculoDTO;
 import br.gama.itau.spring03.model.Veiculo;
-import br.gama.itau.spring03.repository.VeiculoRepo;
 import br.gama.itau.spring03.service.VeiculoService;
 
 @RestController
 @RequestMapping("/veiculo")
 public class VeiculoController {
-
-    @Autowired
-    private VeiculoRepo repo;
-
-    @Autowired
-    private VeiculoService service;
     
+    @Autowired // Injeção de dependência
+    private VeiculoService service;
+
     @GetMapping
-    public ResponseEntity<List<Veiculo>> getAll() {
-        List<Veiculo> lista = (List<Veiculo>) repo.findAll();
+    public ResponseEntity<List<VeiculoDTO>> getAll() {
+        List<VeiculoDTO> lista = service.getAll();
 
         if(lista == null || lista.size() == 0) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(lista);
     }
+
     @GetMapping("/{id}")
-    public ResponseEntity<Veiculo> getById(@PathVariable Long id) {
+    public ResponseEntity<VeiculoDTO> getById(@PathVariable Long id) {
         Veiculo veiculo = service.getById(id);
 
         if(veiculo == null) {
             return ResponseEntity.notFound().build();
         }
-            return ResponseEntity.ok(veiculo);
+        VeiculoDTO veiculoDTO = new VeiculoDTO(veiculo);
+        return ResponseEntity.ok(veiculoDTO);
     }
 
     @PostMapping
     public ResponseEntity<Veiculo> newVeiculo(@RequestBody Veiculo novoVeiculo) {
-        if(novoVeiculo.getId() > 0) {
+        Veiculo veiculoInserido = service.newVeiculo(novoVeiculo);
+        
+        if(veiculoInserido == null) {
             return ResponseEntity.badRequest().build();
         }
-        Veiculo veiculoInserido = repo.save(novoVeiculo);
-        return ResponseEntity.status(HttpStatus.CREATED).body(veiculoInserido); // cód http 201 - inserido ocm sucesso
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(veiculoInserido); // cód http 201 = inserido com sucesso
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Veiculo> updateVeiculo(@PathVariable long id, @RequestBody Veiculo veiculo) {
-        Optional<Veiculo> veiculoOptional = repo.findById(id);
+        Veiculo veiculoAtualizado = service.updatVeiculo(id, veiculo);
 
-        if(veiculoOptional.isEmpty()) {
+        if(veiculoAtualizado == null) {
             return ResponseEntity.notFound().build();
         }
-        veiculo.setId(id);
-        Veiculo veiculoAtualizadVeiculo = repo.save(veiculo);
-        return ResponseEntity.ok(veiculoAtualizadVeiculo);
+        return ResponseEntity.ok(veiculoAtualizado);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Veiculo> deleteById(@PathVariable Long id) {
-        Optional<Veiculo> veiculoOptional = repo.findById(id);
+        boolean apagado = service.deleteVeiculo(id);
 
-        if(veiculoOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
+        if(apagado) {
+            return ResponseEntity.noContent().build();
         }
-        repo.deleteById(id);
-        return ResponseEntity.noContent().build(); // cód http 204 = retorno com sucesso sem conteúdo no body(corpo)
+        return ResponseEntity.notFound().build();
     }
+
 }
