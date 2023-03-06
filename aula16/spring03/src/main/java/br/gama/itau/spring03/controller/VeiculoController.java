@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.gama.itau.spring03.model.Veiculo;
 import br.gama.itau.spring03.repository.VeiculoRepo;
+import br.gama.itau.spring03.service.VeiculoService;
 
 @RestController
 @RequestMapping("/veiculo")
@@ -24,6 +25,9 @@ public class VeiculoController {
 
     @Autowired
     private VeiculoRepo repo;
+
+    @Autowired
+    private VeiculoService service;
     
     @GetMapping
     public ResponseEntity<List<Veiculo>> getAll() {
@@ -36,13 +40,12 @@ public class VeiculoController {
     }
     @GetMapping("/{id}")
     public ResponseEntity<Veiculo> getById(@PathVariable Long id) {
-        Optional<Veiculo> veiculoOptional = repo.findById(id);
+        Veiculo veiculo = service.getById(id);
 
-        if(veiculoOptional.isEmpty()) {
+        if(veiculo == null) {
             return ResponseEntity.notFound().build();
         }
-        Veiculo veiculoEncontrado = veiculoOptional.get();
-        return ResponseEntity.ok(veiculoEncontrado);
+            return ResponseEntity.ok(veiculo);
     }
 
     @PostMapping

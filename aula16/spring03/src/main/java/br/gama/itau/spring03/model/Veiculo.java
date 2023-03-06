@@ -5,7 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +16,6 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table
 public class Veiculo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,4 +32,9 @@ public class Veiculo {
     private String modelo;
 
     private int anoFabricacao;
+
+    @ManyToMany
+    @JoinColumn(name = "id_proprietario") // Cria uma coluna de relacionamento na tabela
+    @JsonIgnoreProperties("veiculos") // Quando buscar os dados do proprietário, ignore os dados dos veículos.
+    private Proprietario proprietario;
 }
