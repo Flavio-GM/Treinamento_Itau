@@ -1,7 +1,6 @@
 package br.gama.itau.spring03.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,11 +37,8 @@ public class VeiculoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<VeiculoDTO> getById(@PathVariable Long id) {
-        Veiculo veiculo = service.getById(id);
 
-        if(veiculo == null) {
-            return ResponseEntity.notFound().build();
-        }
+        Veiculo veiculo = service.getById(id);
         VeiculoDTO veiculoDTO = new VeiculoDTO(veiculo);
         return ResponseEntity.ok(veiculoDTO);
     }
@@ -60,7 +56,7 @@ public class VeiculoController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Veiculo> updateVeiculo(@PathVariable long id, @RequestBody Veiculo veiculo) {
-        Veiculo veiculoAtualizado = service.updatVeiculo(id, veiculo);
+        Veiculo veiculoAtualizado = service.updateVeiculo(id, veiculo);
 
         if(veiculoAtualizado == null) {
             return ResponseEntity.notFound().build();
@@ -78,4 +74,12 @@ public class VeiculoController {
         return ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/placa/{placa}")
+    public ResponseEntity<VeiculoDTO> getByPlaca(@PathVariable String placa) {
+
+        Veiculo veiculo = service.getByPlaca(placa);
+        
+        VeiculoDTO veiculoDTO = new VeiculoDTO(veiculo);
+        return ResponseEntity.ok(veiculoDTO);
+    }
 }
