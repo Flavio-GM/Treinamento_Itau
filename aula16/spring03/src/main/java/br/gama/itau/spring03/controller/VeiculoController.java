@@ -20,6 +20,7 @@ import br.gama.itau.spring03.service.VeiculoService;
 
 @RestController
 @RequestMapping("/veiculo")
+
 public class VeiculoController {
     
     @Autowired // Injeção de dependência
@@ -81,5 +82,15 @@ public class VeiculoController {
         
         VeiculoDTO veiculoDTO = new VeiculoDTO(veiculo);
         return ResponseEntity.ok(veiculoDTO);
+    }
+
+    @GetMapping("/anoFabric/{anoFabric}")
+    public ResponseEntity<List<Veiculo>> getGreaterThanAnoFabricacao(@PathVariable int anoFabric) {
+        return ResponseEntity.ok(service.getGreaterThanAnoFabricacao(anoFabric));
+    }
+
+    @GetMapping("/marca")
+    public ResponseEntity<List<Veiculo>> getAllOrderMarca() {
+        return ResponseEntity.ok(service.getAllOrderMarca());
     }
 }
